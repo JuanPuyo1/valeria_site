@@ -1,14 +1,355 @@
 <!DOCTYPE html>
-
-<html lang="en" dir="ltr">
+<html lang="es" dir="ltr">
   <head>
-    <meta charset="utf-8">  
+    <meta charset="utf-8">
     <title>Valeria</title>
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Iconscout Link For Icons -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+    <style>
+      .birthday-stage {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem 1.25rem 2.5rem;
+        background:
+          radial-gradient(ellipse at 50% 20%, rgba(255, 236, 210, 0.55), transparent 55%),
+          linear-gradient(180deg, #c9d6df 0%, #a4b4c1 45%, #8fa0ae 100%);
+      }
+
+      .birthday-hint {
+        position: relative;
+        z-index: 10;
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.15rem;
+        letter-spacing: 0.04em;
+        color: #3d4a55;
+        margin-bottom: 5.5rem;
+        text-align: center;
+        transition: opacity 0.35s ease;
+      }
+
+      .birthday-stage:has(#click:checked) .birthday-hint {
+        opacity: 0;
+        height: 0;
+        margin: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+
+      .birthday-scene {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 420px;
+      }
+
+      .wishes {
+        width: min(340px, 90vw);
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transform: translateY(48px);
+        transition:
+          max-height 0.55s ease,
+          opacity 0.4s ease,
+          transform 0.55s ease,
+          margin 0.4s ease;
+        margin-bottom: 0;
+        pointer-events: none;
+        z-index: 4;
+      }
+
+      .birthday-scene:has(#click:checked) .wishes {
+        max-height: 480px;
+        opacity: 1;
+        transform: translateY(0);
+        margin-bottom: 1.5rem;
+        pointer-events: auto;
+      }
+
+      .birthday-note {
+        background: linear-gradient(165deg, #fff8ee 0%, #f7ecd8 100%);
+        border: 1px solid rgba(120, 90, 60, 0.18);
+        box-shadow: 0 14px 28px rgba(40, 30, 20, 0.18);
+        padding: 1.2rem 1.15rem 1.1rem;
+        color: #3a2f28;
+        text-align: left;
+      }
+
+      .birthday-note h2 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.45rem;
+        font-weight: 600;
+        margin-bottom: 0.65rem;
+        color: #7a3b2e;
+        text-align: center;
+      }
+
+      .birthday-note p {
+        font-family: "Caveat", cursive;
+        font-size: 1.2rem;
+        line-height: 1.35;
+        margin-bottom: 0.55rem;
+      }
+
+      .birthday-note .sign-off {
+        margin-top: 0.75rem;
+        margin-bottom: 0;
+        text-align: right;
+        font-size: 1.25rem;
+        color: #5c3d34;
+      }
+
+      .birthday-gift {
+        position: relative;
+        width: 150px;
+        height: 100px;
+        flex-shrink: 0;
+        isolation: isolate;
+      }
+
+      .birthday-gift::before {
+        content: "";
+        position: absolute;
+        width: 170px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.35);
+        top: 90px;
+        left: -10px;
+        z-index: 0;
+      }
+
+      input#click {
+        display: none;
+      }
+
+      .gift-box {
+        position: absolute;
+        inset: 0;
+        width: 150px;
+        height: 100px;
+        background-color: #e9c46a;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .gift-box::before {
+        content: "";
+        position: absolute;
+        width: 25px;
+        height: 100px;
+        background-color: #e76f51;
+        left: 62px;
+      }
+
+      .gift-box::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .click {
+        position: absolute;
+        background-color: #e9c46a;
+        width: 170px;
+        height: 40px;
+        top: -40px;
+        left: -10px;
+        transform-origin: bottom left;
+        transition: 0.3s;
+        cursor: pointer;
+        z-index: 3;
+      }
+
+      .click::before {
+        content: "";
+        position: absolute;
+        width: 25px;
+        height: 40px;
+        background-color: #e76f51;
+        left: 69px;
+      }
+
+      .click::after {
+        content: "";
+        position: absolute;
+        width: 5px;
+        height: 0;
+        border-bottom: 30px solid #e76f51;
+        border-top: 30px solid #e76f51;
+        border-left: 0 solid transparent;
+        border-right: 30px solid transparent;
+        transform: rotate(-90deg);
+        left: 65px;
+        top: -47px;
+      }
+
+      #click:checked + .click {
+        transform: rotate(-110deg) scaleX(0.85);
+      }
+
+      .sparkles {
+        position: absolute;
+        display: none;
+        top: -15px;
+        z-index: 1;
+        left: 40px;
+      }
+
+      #click:checked ~ .sparkles {
+        display: block;
+      }
+
+      .spark1,
+      .spark2,
+      .spark3,
+      .spark4,
+      .spark5,
+      .spark6 {
+        position: absolute;
+        background-color: #fee440;
+        border-radius: 50%;
+        top: -9px;
+        z-index: -1;
+      }
+
+      .spark1 {
+        width: 8px;
+        height: 8px;
+        left: 30px;
+        top: -9px;
+        animation: fire 0.9s ease-in-out infinite, color 0.4s linear infinite;
+      }
+
+      .spark1::before {
+        content: "";
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        top: 8px;
+        left: 11px;
+        background-color: #fee440;
+        border-radius: 50%;
+      }
+
+      .spark2 {
+        width: 9px;
+        height: 9px;
+        left: 33px;
+        top: -5px;
+        animation: fire2 0.28s ease-in-out infinite, color 0.4s linear infinite;
+      }
+
+      .spark2::before {
+        content: "";
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        top: 12px;
+        left: 3px;
+        background-color: #fee440;
+        border-radius: 50%;
+      }
+
+      .spark3 {
+        width: 8.5px;
+        height: 8.5px;
+        left: 33px;
+        top: -5px;
+        animation: fire3 0.36s ease-in-out infinite, color2 0.4s linear infinite;
+      }
+
+      .spark3::before {
+        content: "";
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        top: 12px;
+        left: -1px;
+        background-color: #fee440;
+        border-radius: 50%;
+      }
+
+      .spark4 {
+        width: 7px;
+        height: 7px;
+        left: 27px;
+        top: -5px;
+        animation: fire2 0.24s ease-in-out infinite, color2 0.2s linear infinite;
+      }
+
+      .spark5 {
+        width: 7px;
+        height: 7px;
+        left: 29px;
+        top: -5px;
+        animation: fire3 0.45s ease-in-out infinite, color 0.2s linear infinite;
+      }
+
+      .spark6 {
+        width: 6px;
+        height: 6px;
+        left: 29px;
+        top: -5px;
+        animation: fire 0.35s ease-in-out infinite, color2 0.2s linear infinite;
+      }
+
+      @keyframes fire3 {
+        100% {
+          transform: translateX(20px) translateY(-93px);
+          opacity: 0.3;
+        }
+      }
+
+      @keyframes fire2 {
+        100% {
+          transform: translateX(-5px) translateY(-90px);
+          opacity: 0.3;
+        }
+      }
+
+      @keyframes fire {
+        100% {
+          transform: translateX(-25px) translateY(-95px);
+          opacity: 0.3;
+        }
+      }
+
+      @keyframes color {
+        from { background-color: #d00000; }
+        to { background-color: #0081a7; }
+      }
+
+      @keyframes color2 {
+        from { background-color: #8cff00; }
+        to { background-color: #1d2d44; }
+      }
+
+      @media (max-width: 480px) {
+        .birthday-note h2 {
+          font-size: 1.3rem;
+        }
+
+        .birthday-note p {
+          font-size: 1.1rem;
+        }
+
+        .birthday-scene:has(#click:checked) .wishes {
+          max-height: 520px;
+          margin-bottom: 1.25rem;
+        }
+      }
+    </style>
   </head>
   <body>
     <nav>
@@ -25,32 +366,38 @@
         <li><a href="03.05-keyboard-controls.html">Laberinto</a></li>
       </ul>
     </nav>
-    <section>
-      <div class="holder">
-        <div class="candle"  >
-          <div class="blinking-glow container"></div>
-          <div class="glow container"></div>
-          <div class="flame container"></div>
-          <div class="thread"></div>
+
+    <main class="birthday-stage">
+      <p class="birthday-hint">Abre tu regalo</p>
+
+      <div class="birthday-scene">
+        <div class="wishes">
+          <article class="birthday-note">
+            <h2>Mi amor, ¡Feliz cumpleaños!</h2>
+            <p>En estos cuatro cumples te he acompañado, visto crecer, amado cada día más,</p>
+            <p>Te mereces todo, y espero tu regalito también te guste,</p>
+            <p>Espero también recuerdes esta página, uno de mis primeros regalos por tu cumple!</p>
+            <p>Te amo, anhelo siempre estar contigo, poder celebrar todos nuestros cumples,</p>
+            <p class="sign-off">Att: el amor de tu vida, Juan Esteban</p>
+          </article>
         </div>
-</div>
-<button id="toggle-btn" style="display: block; margin: 2rem auto;">Valeria</button>
-</section>
-<section>
-  <div class="holder">
-    <div class="candle"  >
-      <div class="blinking-glow container"></div>
-      <div class="glow container"></div>
-      <div class="flame container"></div>
-      <div class="thread"></div>
-    </div>
-</div>
-<button id="toggle-btn" style="display: block; margin: 2rem auto;">Esteban</button>
 
-</section>
-<script src="script2.js"></script>
-   
+        <div class="birthday-gift">
+          <input id="click" type="checkbox">
+          <label class="click" for="click" aria-label="Abrir regalo"></label>
 
+          <div class="sparkles">
+            <div class="spark1"></div>
+            <div class="spark2"></div>
+            <div class="spark3"></div>
+            <div class="spark4"></div>
+            <div class="spark5"></div>
+            <div class="spark6"></div>
+          </div>
 
+          <div class="gift-box" aria-hidden="true"></div>
+        </div>
+      </div>
+    </main>
   </body>
 </html>
